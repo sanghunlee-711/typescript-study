@@ -1,0 +1,3 @@
+//stack...
+//no Array, Object??..
+//Can use push and pop only
