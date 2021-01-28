@@ -1,12 +1,14 @@
 {
-    //복잡한 로직을 외부에서 바라봤을 때에도 간단하게 보일 수 있도록 만드는 것
     
         type CoffeeCup = {
           shots: number;
-          hasMilk: boolean;
+          hasMilk?: boolean;
+          //me
+          sugar?: number;
+          //ellie
+          hasSugar?: boolean;
         };
       
-        //아래와 같이 interface를 이용하여 함수마다 정의를 해주면 추상화를 극대화 할 수 있다.
         interface CoffeeMaker{
           makeCoffee(shots: number): CoffeeCup;
         }
@@ -15,7 +17,6 @@
           private static BEANS_GRAMM_PER_SHOT: number = 7; //class level
           private coffeeBeans: number = 0; //instance(object) level
           
-          //상속하는 자식들에게서는 접근가능한 방향 protected
           public constructor(coffeeBeans: number) {
             this.coffeeBeans = coffeeBeans;
           }
@@ -84,13 +85,62 @@
             }
         }
 
-        const machine = new CoffeeMachine(23);
-        const latteMachine = new CaffeeLatteMachine(23, 'ssss');
-        const coffee = latteMachine.makeCoffee(1);
-        console.log(coffee);
-        console.log(latteMachine.serialNumber);
+        //LEE
+        //설탕 들어가는 머신, 커피컵에 설탕을 추가해주는 클래스!
+        class SweetCoffeeMakerme extends CoffeeMachine{
+            sugar?:number;
+            constructor(beans: number, sugar?:number){
+                //확장 받으려 하는 클래스의 constructor의 내부를 가져오기 위해서 super가 필요
+                super(beans);
+                sugar = 0;
+            }
+             addSugar(sugar:number):void{
+                this.sugar += sugar
+            }
+            makeCoffee(shots:number): CoffeeCup{
+                const coffee = super.makeCoffee(shots);
+                return{
+                    ...coffee,
+                    sugar: this.sugar
+                }
+            }
+        }
+        const addSweet = new SweetCoffeeMakerme(2);
+        const addSugar = addSweet.addSugar(4);
+        console.log(addSugar);
+        //
 
+        //Ellie
+        //다형성을 이용하여 한가지의 클래스를 통해 다양한 클래스를 생성할 수 있게 됨
+        class SweetCoffeeMaker extends CoffeeMachine {
+            makeCoffee(shots: number): CoffeeCup{
+                const coffee = super.makeCoffee(shots);
+                return{
+                    ...coffee,
+                    hasSugar: true,
+                }
+            }
+        }
 
-      
+        //다형성의 장점은 내부적으로 구현된 다양한 클래스들이 
+        //한가지 인터페이스를 구현하거나 동일한 부모 클래스 상속 시 
+        //동일한 함수를 어떤클래스인지 구분하지 않고 공통된 api를 호출할 수 있다는 것이 큰 장점이다.
+        //CoffeeMaker[] = CoffeeMachine[] 이다?
+        const machines: CoffeeMaker[] = [
+        new CoffeeMachine(16),
+        new CaffeeLatteMachine(16, '1'),
+        new SweetCoffeeMaker(16),
+        new CoffeeMachine(16),
+        new CaffeeLatteMachine(16, '1'),
+        new SweetCoffeeMaker(16),
+        new CoffeeMachine(16),
+        new CaffeeLatteMachine(16, '1'),
+        new SweetCoffeeMaker(16),
+        ];
+        machines.forEach(machine1 =>{
+            console.log("------------------------");
+            machine1.makeCoffee(1);
+        })
+
       
 }
