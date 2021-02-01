@@ -65,3 +65,15 @@
   //위 방식은 별로 추천되지 않음 ..
   //discriminatedUnion을 사용하자
 }
+
+
+{
+  type Animal = 'cat' | 'dog' | 'bird'
+  
+  function whatAnimal(arg: Animal): Animal{
+    console.log(arg);
+    return arg
+  }
+
+  whatAnimal("")
+}
